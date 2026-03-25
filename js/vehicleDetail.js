@@ -50,9 +50,12 @@ async function loadVehicle(id) {
 
     ownerId = v.owner?._id || v.owner;
 
-    document.getElementById("vehicleDetail").innerHTML = `
-    <img src="http://localhost:3008/upload/${v.image}" />
+const imgSrc = v.image 
+    ? `http://localhost:3008/uploads/${v.image}` 
+    : "https://via.placeholder.com/400";
 
+    document.getElementById("vehicleDetail").innerHTML = `
+    <img src="${imgSrc}" />
     <h2>${v.brand} ${v.model}</h2>
     <p><b>Año:</b> ${v.year}</p>
     <p><b>Precio:</b> $${v.price}</p>
@@ -118,14 +121,14 @@ async function loadQuestions() {
           <small>${new Date(q.createdAt).toLocaleString()}</small>
       `;
 
-      if (q.answer) {
-        html += `
-          <div class="answer">
-            <p><b>${q.answer.user?.name || "Propietario"} respondió:</b> ${q.answer.answer}</p>
+if (q.answer) {
+    html += `
+        <div class="answer">
+            <p><b>${q.answer.user?.name || "Propietario"} respondió:</b> ${q.answer.text}</p>
             <small>${new Date(q.answer.createdAt).toLocaleString()}</small>
-          </div>
-        `;
-      }
+        </div>
+    `;
+}
 
       if (!q.answer && userId === ownerId) {
         html += `

@@ -1,5 +1,5 @@
 const token = sessionStorage.getItem('authToken');
-const email = sessionStorage.getItem('email');
+const email = sessionStorage.getItem('userEmail');
 
 document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.getElementById('navbar');
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             sessionStorage.removeItem('authToken');
-            sessionStorage.removeItem('email');
+            sessionStorage.removeItem("userEmail");
             window.location.href = 'index.html';
         });
     }

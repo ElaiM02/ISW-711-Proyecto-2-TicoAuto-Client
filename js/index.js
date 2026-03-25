@@ -23,12 +23,18 @@ async function getVehicles() {
 
 function renderVehicles(list) {
     const container = document.getElementById('vehicleContainer');
+     if (list.length === 0) {
+    container.innerHTML = "<p>No hay vehículos disponibles</p>";
+    return;
+
+     }
+    
     let html = '';
 
     list.forEach(vehicle => {
 
         const imageUrl = vehicle.image
-            ? `http://localhost:3008/upload/${vehicle.image}`
+            ? `http://localhost:3008/uploads/${vehicle.image}`
             : "https://via.placeholder.com/400";
         html += `
             <div class="vehicle-card">
@@ -49,40 +55,8 @@ function renderVehicles(list) {
             </div>
         `;
     });
-
-    if (list.length === 0) {
-    container.innerHTML = "<p>No hay vehículos disponibles</p>";
-    return;
 }
-
     container.innerHTML = html;
-}
-
-    async function saveVehicle() {
-
-    const formData = new FormData();
-
-    formData.append("brand", document.getElementById("brand").value);
-    formData.append("model", document.getElementById("model").value);
-    formData.append("year", document.getElementById("year").value);
-    formData.append("price", document.getElementById("price").value);
-    formData.append("description", document.getElementById("description").value);
-
-    const fileInput = document.getElementById("image");
-    formData.append("image", fileInput.files[0]);
-
-    await fetch("http://localhost:3008/api/vehicle", {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${authToken}`
-        },
-        body: formData
-    });
-
-    alert("Vehículo guardado");
-    getVehicles();
-}
-
 
 function viewVehicle(id) {
     window.location.href = `vehicleDetail.html?id=${id}`;

@@ -1,5 +1,6 @@
 const API_BASE = "http://localhost:3008/api";
 
+document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("registerForm");
         const msg = document.getElementById("msg");
         const btn = document.getElementById("btnRegister");
@@ -77,3 +78,4 @@ const API_BASE = "http://localhost:3008/api";
             }
 
         });
+    });

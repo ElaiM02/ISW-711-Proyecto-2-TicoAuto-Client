@@ -32,7 +32,7 @@ async function createVehicle(){
 
     if(editVehicleId){
         url = `${API_BASE}/vehicle/${editVehicleId}`;
-        method = "PUT"; // o PATCH según tu backend
+        method = "PATCH";
     }
 
     const response = await fetch(url, {
@@ -80,6 +80,7 @@ async function getVehicles(){
     vehicles.forEach(v => {
         html += `
         <tr>
+            <td><img src="http://localhost:3008/uploads/${v.image}" width="60"></td>
             <td>${v.brand}</td>
             <td>${v.model}</td>
             <td>${v.year}</td>
