@@ -38,21 +38,28 @@ function renderVehicles(list) {
             : "https://via.placeholder.com/400";
         html += `
             <div class="vehicle-card">
-
+            <div style="position:relative;">
                 <img src="${imageUrl}" class="vehicle-img">
-
-                <h3>${vehicle.brand} ${vehicle.model}</h3>
-                <p class="desc">
-                    ${vehicle.description || "Sin descripción"}
-                </p>
-
-                <p><b>Año:</b> ${vehicle.year}</p>
-                <p><b>Precio:</b> $${vehicle.price}</p>
-
-                <button onclick="viewVehicle('${vehicle._id}')">
-                    Ver Detalle
-                </button> 
+                <span style="
+                    position:absolute;
+                    top:8px;
+                    right:8px;
+                    background:${vehicle.status === 'sold' ? '#dc3545' : '#28a745'};
+                    color:white;
+                    padding:4px 10px;
+                    border-radius:12px;
+                    font-size:12px;
+                    font-weight:bold;
+                ">
+                    ${vehicle.status === 'sold' ? 'Vendido' : 'Disponible'}
+                </span>
             </div>
+            <h3>${vehicle.brand} ${vehicle.model}</h3>
+            <p class="desc">${vehicle.description || "Sin descripción"}</p>
+            <p><b>Año:</b> ${vehicle.year}</p>
+            <p><b>Precio:</b> $${vehicle.price}</p>
+            <button onclick="viewVehicle('${vehicle._id}')">Ver Detalle</button> 
+        </div>
         `;
     });
     container.innerHTML = html;

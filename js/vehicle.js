@@ -88,10 +88,12 @@ async function getVehicles(){
             <td>${v.model}</td>
             <td>${v.year}</td>
             <td>${v.price}</td>
+            <td>${v.status === 'sold' ? 'Vendido' : 'Disponible'}</td>
             <td>
                 <button onclick="viewVehicle('${v._id}')">Ver Detalle</button>
                 <button onclick="editVehicle('${v._id}')">Editar</button>
                 <button onclick="deleteVehicle('${v._id}')">Eliminar</button>
+                <button onclick="markAsSold('${v._id}')">${v.status === 'sold' ? 'Marcar disponible' : 'Marcar vendido'}</button>
             </td>
         </tr>
         `;
@@ -170,3 +172,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+async function markAsSold(id) {
+    const token = sessionStorage.getItem("authToken");
+
+    const response = await fetch(`${API_BASE}/vehicle/${id}/sold`, {
+        method: "PATCH",
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (response.ok) {
+        getVehicles();
+    } else {
+        alert("Error al cambiar estado");
+    }
+}
