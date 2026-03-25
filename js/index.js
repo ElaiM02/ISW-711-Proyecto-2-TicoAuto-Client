@@ -55,9 +55,9 @@ function renderVehicles(list) {
             </div>
         `;
     });
-}
     container.innerHTML = html;
-
+}
+    
 function viewVehicle(id) {
     window.location.href = `vehicleDetail.html?id=${id}`;
 }

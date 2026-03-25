@@ -66,14 +66,17 @@ async function createVehicle(){
 async function getVehicles(){
     const token = sessionStorage.getItem("authToken");
 
-    const response = await fetch(`${API_BASE}/vehicle`, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
+    const response = await fetch(`${API_BASE}/vehicle/me`, {
+    headers: { "Authorization": `Bearer ${token}` }
     });
 
     const result = await response.json();
     const vehicles = result.data;
+
+    if (!vehicles || vehicles.length === 0) {
+        document.getElementById("vehicleList").innerHTML = "<tr><td colspan='6'>No tienes vehículos registrados</td></tr>";
+        return;
+    }
 
     let html = "";
 
@@ -120,8 +123,15 @@ async function editVehicle(id){
         document.getElementById("model").value = vehicle.model;
         document.getElementById("year").value = vehicle.year;
         document.getElementById("price").value = vehicle.price;
+        document.getElementById("description").value = vehicle.description || "";
 
-        editVehicleId = vehicle._id;  // Guardamos el ID que estamos editando
+        const preview = document.getElementById("previewImage");
+        if (vehicle.image) {
+            preview.src = `http://localhost:3008/uploads/${vehicle.image}`;
+            preview.style.display = "block";
+        }
+
+        editVehicleId = vehicle._id;
         document.getElementById("saveBtn").innerText = "Actualizar vehículo";
 
     } catch (error) {
@@ -150,3 +160,13 @@ async function deleteVehicle(id){
         alert(data.message || "Error al eliminar vehículo");
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("vehicleForm");
+    if (form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            createVehicle();
+        });
+    }
+});
