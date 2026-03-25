@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TicoAuto</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <script src="js/navbar.js"></script>
+    <script src="js/index.js"></script>
+</head>
+
+<body>
+    <div id="navbar"></div>
+
+    <div class="search-box">
+
+        <h2>Buscar Autos </h2>
+
+        <div class="search-grid">
+<input id="brandFilter" placeholder="Marca">
+<input id="modelFilter" placeholder="Modelo">
+<input id="minYearFilter" type="number" placeholder="Año mínimo">
+<input id="maxYearFilter" type="number" placeholder="Año máximo">
+<input id="minPriceFilter" type="number" placeholder="Precio mínimo">
+<input id="maxPriceFilter" type="number" placeholder="Precio máximo">
+
+<select id="statusFilter">
+    <option value="">Estado</option>
+    <option value="available">Disponible</option>
+    <option value="sold">Vendido</option>
+</select>
+<button onclick="searchVehicles()">Buscar</button>
+<button onclick="clearFilters()">Limpiar</button>
+
+        </div>
+    </div>
+    
+    <h1>Autos</h1>
+
+    <div id="vehicleContainer" class="vehicle-grid"></div>
+</div>
+
+<footer class="footer">
+
+<p>© 2026 TicoAuto Marketplace</p>
+
+</footer>
+</body>
+</html>
