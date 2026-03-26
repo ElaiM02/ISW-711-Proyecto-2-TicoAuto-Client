@@ -70,6 +70,7 @@ const imgSrc = v.image
 async function loadQuestions() {
   try {
     const token = sessionStorage.getItem("authToken");
+    const userId = getUserIdFromToken();
 
     const response = await fetch(`${API_BASE}/question/${vehicleId}`, {
       method: "GET",
@@ -91,7 +92,13 @@ async function loadQuestions() {
     const container = document.getElementById("questionList");
     const input = document.getElementById("questionInput");
 
-    const userId = getUserIdFromToken();
+    // ✅ Primero controla la visibilidad del section
+const questionSection = document.getElementById("questionSection");
+if (userId && userId !== ownerId.toString()) {
+    questionSection.style.display = "block";
+} else {
+    questionSection.style.display = "none";
+}
 
     if (questions.length === 0) {
       container.innerHTML = "<p>No hay preguntas aún</p>";
@@ -115,7 +122,7 @@ async function loadQuestions() {
       html += `
         <div class="question-card">
           <p>
-            <b>${q.user?.name || "Usuario"}:</b> ${q.question}
+            <b>${q.user || "Usuario"}:</b> ${q.question}
             ${q.userId === userId ? '<span style="color:green;"> (Tu pregunta)</span>' : ''}
           </p>
           <small>${new Date(q.createdAt).toLocaleString()}</small>
@@ -124,7 +131,7 @@ async function loadQuestions() {
 if (q.answer) {
     html += `
         <div class="answer">
-            <p><b>${q.answer.user?.name || "Propietario"} respondió:</b> ${q.answer.text}</p>
+            <p><b>${q.answer.user || "Propietario"} respondió:</b> ${q.answer.text}</p>
             <small>${new Date(q.answer.createdAt).toLocaleString()}</small>
         </div>
     `;
@@ -132,8 +139,8 @@ if (q.answer) {
 
       if (!q.answer && userId === ownerId) {
         html += `
-          <textarea id="answer-${q._id}" placeholder="Responder..."></textarea>
-          <button class="answer-btn" onclick="createAnswer('${q._id}')">
+          <textarea id="answer-${q.id}" placeholder="Responder..."></textarea>
+          <button class="answer-btn" onclick="createAnswer('${q.id}')">
             Responder
           </button>
         `;
