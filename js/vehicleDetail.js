@@ -60,6 +60,7 @@ const imgSrc = v.image
     <p><b>Año:</b> ${v.year}</p>
     <p><b>Precio:</b> $${v.price}</p>
     <p>${v.description || "Sin descripción"}</p>
+    <p><b>Propietario:</b> ${v.owner?.name || "No disponible"}</p>
 `;
     } catch (error) {
         console.error(error);
@@ -72,6 +73,11 @@ async function loadQuestions() {
     const token = sessionStorage.getItem("authToken");
     const userId = getUserIdFromToken();
 
+if (!token) {
+        document.getElementById("questionList").innerHTML = "<p>Inicia sesión para ver las preguntas.</p>";
+        return;
+    }
+
     const response = await fetch(`${API_BASE}/question/${vehicleId}`, {
       method: "GET",
       headers: {
@@ -81,18 +87,10 @@ async function loadQuestions() {
     });
 
     const result = await response.json();
-
-    if (!response.ok) {
-      console.log("ERROR BACKEND: ", result);
-      alert(result.message);
-      return;
-    }
-
     const questions = result.data;
     const container = document.getElementById("questionList");
     const input = document.getElementById("questionInput");
 
-    // ✅ Primero controla la visibilidad del section
 const questionSection = document.getElementById("questionSection");
 if (userId && userId !== ownerId.toString()) {
     questionSection.style.display = "block";
@@ -244,3 +242,13 @@ async function createQuestion() {
             alert("Error al enviar la respuesta");
         }
     }
+
+    function shareVehicle() {
+    const url = window.location.href;
+    
+    navigator.clipboard.writeText(url).then(() => {
+        alert("¡Enlace copiado al portapapeles!\n" + url);
+    }).catch(() => {
+        prompt("Copia este enlace:", url);
+    });
+}
