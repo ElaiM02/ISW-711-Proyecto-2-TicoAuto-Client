@@ -1,7 +1,5 @@
 const API_BASE= "http://localhost:3008/api";
 
-let vehicles = [];
-
 window.onload = function() {
     getVehicles();
 };
@@ -10,11 +8,7 @@ async function getVehicles() {
     try {
         const response = await fetch(`${API_BASE}/vehicle`);
         const data = await response.json();
-        
-        vehicles = data.data;
-
-        renderVehicles(vehicles);
-
+        renderVehicles(data.data);
     } catch (error) {
         console.error(error);
         alert('No se pudieron cargar los vehículos');
@@ -23,46 +17,34 @@ async function getVehicles() {
 
 function renderVehicles(list) {
     const container = document.getElementById('vehicleContainer');
-     if (list.length === 0) {
+
+     if (!list || list.length === 0) {
     container.innerHTML = "<p>No hay vehículos disponibles</p>";
     return;
-
      }
     
-    let html = '';
-
-    list.forEach(vehicle => {
-
+    container.innerHTML = list.map(vehicle => {
         const imageUrl = vehicle.image
             ? `http://localhost:3008/uploads/${vehicle.image}`
             : "https://via.placeholder.com/400";
-        html += `
+        const isSold = vehicle.status === 'sold';
+
+        return `
             <div class="vehicle-card">
-            <div style="position:relative;">
-                <img src="${imageUrl}" class="vehicle-img">
-                <span style="
-                    position:absolute;
-                    top:8px;
-                    right:8px;
-                    background:${vehicle.status === 'sold' ? '#dc3545' : '#28a745'};
-                    color:white;
-                    padding:4px 10px;
-                    border-radius:12px;
-                    font-size:12px;
-                    font-weight:bold;
-                ">
-                    ${vehicle.status === 'sold' ? 'Vendido' : 'Disponible'}
-                </span>
+                <div class="vehicle-img-container">
+                    <img src="${imageUrl}" class="vehicle-img">
+                    <span class="badge ${isSold ? 'badge-sold' : 'badge-available'}">
+                        ${isSold ? 'Vendido' : 'Disponible'}
+                    </span>
+                </div>
+                <h3>${vehicle.brand} ${vehicle.model}</h3>
+                <p class="desc">${vehicle.description || "Sin descripción"}</p>
+                <p><b>Año:</b> ${vehicle.year}</p>
+                <p><b>Precio:</b> $${vehicle.price}</p>
+                <button onclick="viewVehicle('${vehicle._id}')">Ver Detalle</button>
             </div>
-            <h3>${vehicle.brand} ${vehicle.model}</h3>
-            <p class="desc">${vehicle.description || "Sin descripción"}</p>
-            <p><b>Año:</b> ${vehicle.year}</p>
-            <p><b>Precio:</b> $${vehicle.price}</p>
-            <button onclick="viewVehicle('${vehicle._id}')">Ver Detalle</button> 
-        </div>
         `;
-    });
-    container.innerHTML = html;
+    }).join('');
 }
     
 function viewVehicle(id) {
@@ -70,46 +52,38 @@ function viewVehicle(id) {
 }
 
 async function searchVehicles(){
+    try {
+        const params = new URLSearchParams();
 
-const brand = document.getElementById("brandFilter").value;
-const model = document.getElementById("modelFilter").value;
-const minYear = document.getElementById("minYearFilter").value;
-const maxYear = document.getElementById("maxYearFilter").value;
-const minPrice = document.getElementById("minPriceFilter").value;
-const maxPrice = document.getElementById("maxPriceFilter").value;
-const status = document.getElementById("statusFilter").value;
+        const filters = {
+            brand: document.getElementById("brandFilter").value,
+            model: document.getElementById("modelFilter").value,
+            minYear: document.getElementById("minYearFilter").value,
+            maxYear: document.getElementById("maxYearFilter").value,
+            minPrice: document.getElementById("minPriceFilter").value,
+            maxPrice: document.getElementById("maxPriceFilter").value,
+            status: document.getElementById("statusFilter").value
+        };
 
-let query = [];
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value) params.append(key, value);
+        });
 
-if(brand) query.push(`brand=${brand}`);
-if(model) query.push(`model=${model}`);
-if(minYear) query.push(`minYear=${minYear}`);
-if(maxYear) query.push(`maxYear=${maxYear}`);
-if(minPrice) query.push(`minPrice=${minPrice}`);
-if(maxPrice) query.push(`maxPrice=${maxPrice}`);
-if(status) query.push(`status=${status}`);
+        const url = `${API_BASE}/vehicle${params.toString() ? '?' + params.toString() : ''}`;
+        const response = await fetch(url);
+        const data = await response.json();
 
-let url = `${API_BASE}/vehicle`;
-
-if(query.length > 0){
-url += "?" + query.join("&");
+        renderVehicles(data.data);
+    } catch (error) {
+        console.error(error);
+        alert('Error al buscar vehículos');
+    }
 }
 
-const response = await fetch(url);
-const data = await response.json();
-
-renderVehicles(data.data);
-
-}
 function clearFilters() {
-
-    document.getElementById("brandFilter").value = "";
-    document.getElementById("modelFilter").value = "";
-    document.getElementById("minYearFilter").value = "";
-    document.getElementById("maxYearFilter").value = "";
-    document.getElementById("minPriceFilter").value = "";
-    document.getElementById("maxPriceFilter").value = "";
-    document.getElementById("statusFilter").value = "";
-
+    ["brandFilter", "modelFilter", "minYearFilter", "maxYearFilter", 
+     "minPriceFilter", "maxPriceFilter", "statusFilter"].forEach(id => {
+        document.getElementById(id).value = "";
+    });
     getVehicles();
 }
