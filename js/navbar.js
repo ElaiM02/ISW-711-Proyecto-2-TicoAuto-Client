@@ -1,25 +1,24 @@
-const token = sessionStorage.getItem('authToken');
-const email = sessionStorage.getItem('userEmail');
-
 document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.getElementById('navbar');
+    const token = sessionStorage.getItem('authToken');
+    const protectedPages = ['vehicle.html'];
+    const currentPage = window.location.pathname.split('/').pop();
+
+    if (protectedPages.includes(currentPage) && !token) {
+        window.location.href = 'login.html';
+        return;
+    }
     
     if (!navbar) return;
 
-    let links = `
-        <li><a href="index.html">Inicio</a></li>
-    `;
+    let links = `<li><a href="index.html">Inicio</a></li>`;
 
     if (!token) {
-
         links += `
             <li><a href="login.html">Login</a></li>
             <li><a href="register.html">Registro</a></li>
         `;
-    }
-
-    else {
-
+    } else {
         links += `
             <li><a href="Vehicle.html">Mis Vehículos</a></li>
             <li><a href="#" id="logoutBtn">Logout</a></li>
@@ -28,14 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     navbar.innerHTML = `
         <nav class="navbar">
-        
-            <div class="logo">
-                TicoAuto
-            </div>
-
-            <ul class="nav-links">
-                ${links}
-            </ul>
+            <div class="logo">TicoAuto</div>
+            <ul class="nav-links">${links}</ul>
         </nav>
     `;
 
