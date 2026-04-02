@@ -1,105 +1,97 @@
 const API_BASE = "http://localhost:3008/api";
+const getToken = () => sessionStorage.getItem("authToken");
 
 let editVehicleId = null;
 
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", () => {
     getVehicles();
-};
 
-async function createVehicle(){
-    const brand = document.getElementById("brand").value;
-    const model = document.getElementById("model").value;
-    const year = document.getElementById("year").value;
-    const price = document.getElementById("price").value;
-    const description = document.getElementById("description").value;
-    const image = document.getElementById("image").files[0];
-
-    const token = sessionStorage.getItem("authToken");
-
-    const formData = new FormData();
-    formData.append("brand", brand);
-    formData.append("model", model);
-    formData.append("year", year);
-    formData.append("price", price);
-    formData.append("description", description);
-
-    if(image){
-        formData.append("image", image);
+    const form = document.getElementById("vehicleForm");
+    if (form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            createVehicle();
+        });
     }
+});
 
-    let url = `${API_BASE}/vehicle`;
-    let method = "POST";
+async function createVehicle() {
+    try {
+        const formData = new FormData();
+        formData.append("brand", document.getElementById("brand").value);
+        formData.append("model", document.getElementById("model").value);
+        formData.append("year", document.getElementById("year").value);
+        formData.append("price", document.getElementById("price").value);
+        formData.append("description", document.getElementById("description").value);
 
-    if(editVehicleId){
-        url = `${API_BASE}/vehicle/${editVehicleId}`;
-        method = "PATCH";
-    }
+        const image = document.getElementById("image").files[0];
+        if (image) formData.append("image", image);
 
-    const response = await fetch(url, {
-        method,
-        headers: {
-            "Authorization": `Bearer ${token}`
-        },
-        body: formData
-    });
+        const url = editVehicleId ? `${API_BASE}/vehicle/${editVehicleId}` : `${API_BASE}/vehicle`;
+        const method = editVehicleId ? "PATCH" : "POST";
 
-    const data = await response.json();
+        const response = await fetch(url, {
+            method,
+            headers: { "Authorization": `Bearer ${getToken()}` },
+            body: formData
+        });
 
-    if(response.ok){
-        alert(editVehicleId ? "Vehículo actualizado" : "Vehículo creado");
-
-        document.getElementById("vehicleForm").reset();
-        document.getElementById("previewImage").style.display = "none";
-
-        editVehicleId = null;
-        document.getElementById("formTitle").innerText = "Agregar vehículo";
-        document.getElementById("saveBtn").innerText = "Guardar vehículo";
-        document.getElementById("cancelEdit").style.display = "none";
-
-        getVehicles();
-    } else {
-        console.log(data);
-        alert(data.message || "Error al guardar vehículo");
+        if (response.ok) {
+            alert(editVehicleId ? "Vehículo actualizado" : "Vehículo creado");
+            resetForm();
+            getVehicles();
+        } else {
+            alert("Error al guardar vehículo");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error al guardar vehículo");
     }
 }
 
+function resetForm() {
+    document.getElementById("vehicleForm").reset();
+    document.getElementById("previewImage").style.display = "none";
+    document.getElementById("formTitle").innerText = "Agregar vehículo";
+    document.getElementById("saveBtn").innerText = "Guardar vehículo";
+    document.getElementById("cancelEdit").style.display = "none";
+    editVehicleId = null;
+}
+
 async function getVehicles(){
-    const token = sessionStorage.getItem("authToken");
+    try {
+        const response = await fetch(`${API_BASE}/vehicle/me`, {
+            headers: { "Authorization": `Bearer ${getToken()}` }
+        });
+        const result = await response.json();
+        const vehicles = result.data;
 
-    const response = await fetch(`${API_BASE}/vehicle/me`, {
-    headers: { "Authorization": `Bearer ${token}` }
-    });
+        if (!vehicles || vehicles.length === 0) {
+            document.getElementById("vehicleList").innerHTML = "<tr><td colspan='6'>No tienes vehículos registrados</td></tr>";
+            return;
+        }
 
-    const result = await response.json();
-    const vehicles = result.data;
+        document.getElementById("vehicleList").innerHTML = vehicles.map(v => `
+            <tr>
+                <td><img src="${v.image ? `http://localhost:3008/uploads/${v.image}` : 'https://via.placeholder.com/60'}" width="60"></td>
+                <td>${v.brand}</td>
+                <td>${v.model}</td>
+                <td>${v.year}</td>
+                <td>$${v.price}</td>
+                <td>${v.status === 'sold' ? 'Vendido' : 'Disponible'}</td>
+                <td>
+                    <button onclick="viewVehicle('${v._id}')">Ver Detalle</button>
+                    <button onclick="editVehicle('${v._id}')">Editar</button>
+                    <button onclick="deleteVehicle('${v._id}')">Eliminar</button>
+                    <button onclick="markAsSold('${v._id}')">${v.status === 'sold' ? 'Marcar disponible' : 'Marcar vendido'}</button>
+                </td>
+            </tr>
+        `).join('');
 
-    if (!vehicles || vehicles.length === 0) {
-        document.getElementById("vehicleList").innerHTML = "<tr><td colspan='6'>No tienes vehículos registrados</td></tr>";
-        return;
+    } catch (error) {
+        console.error(error);
+        alert("Error al cargar vehículos");
     }
-
-    let html = "";
-
-    vehicles.forEach(v => {
-        html += `
-        <tr>
-            <td><img src="http://localhost:3008/uploads/${v.image}" width="60"></td>
-            <td>${v.brand}</td>
-            <td>${v.model}</td>
-            <td>${v.year}</td>
-            <td>${v.price}</td>
-            <td>${v.status === 'sold' ? 'Vendido' : 'Disponible'}</td>
-            <td>
-                <button onclick="viewVehicle('${v._id}')">Ver Detalle</button>
-                <button onclick="editVehicle('${v._id}')">Editar</button>
-                <button onclick="deleteVehicle('${v._id}')">Eliminar</button>
-                <button onclick="markAsSold('${v._id}')">${v.status === 'sold' ? 'Marcar disponible' : 'Marcar vendido'}</button>
-            </td>
-        </tr>
-        `;
-    });
-
-    document.getElementById("vehicleList").innerHTML = html;
 }
 
 function viewVehicle(id) {
@@ -107,20 +99,18 @@ function viewVehicle(id) {
 }
 
 async function editVehicle(id){
-    const token = sessionStorage.getItem("authToken");
-
     try {
         const response = await fetch(`${API_BASE}/vehicle/${id}`, {
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: { "Authorization": `Bearer ${getToken()}` }
         });
-        const vehicle = await response.json();
 
         if (!response.ok) {
-            alert(vehicle.message || "Error al cargar vehículo");
+            alert("Error al cargar vehículo");
             return;
         }
 
-        // Rellenar formulario
+        const vehicle = await response.json();
+
         document.getElementById("brand").value = vehicle.brand;
         document.getElementById("model").value = vehicle.model;
         document.getElementById("year").value = vehicle.year;
@@ -134,8 +124,9 @@ async function editVehicle(id){
         }
 
         editVehicleId = vehicle._id;
+        document.getElementById("formTitle").innerText = "Editar vehículo";
         document.getElementById("saveBtn").innerText = "Actualizar vehículo";
-
+        document.getElementById("cancelEdit").style.display = "inline";
     } catch (error) {
         console.error(error);
         alert("Error al cargar vehículo");
@@ -145,45 +136,38 @@ async function editVehicle(id){
 async function deleteVehicle(id){
     if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
 
-    const token = sessionStorage.getItem("authToken");
+    try {
+        const response = await fetch(`${API_BASE}/vehicle/${id}`, {
+            method: "DELETE",
+            headers: {"Authorization": `Bearer ${getToken()}`}
+        });
 
-    const response = await fetch(`${API_BASE}/vehicle/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Authorization": `Bearer ${token}`
+        if(response.ok){
+            alert("Vehículo eliminado");
+            getVehicles();
+        } else {
+            alert("Error al eliminar vehículo");
         }
-    });
-
-    if(response.ok){
-        alert("Vehículo eliminado");
-        getVehicles();
-    } else {
-        const data = await response.json();
-        alert(data.message || "Error al eliminar vehículo");
+    } catch (error) {
+        console.error(error);
+        alert("Error al eliminar vehículo");
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("vehicleForm");
-    if (form) {
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            createVehicle();
-        });
-    }
-});
-
 async function markAsSold(id) {
-    const token = sessionStorage.getItem("authToken");
+    try {
+        const response = await fetch(`${API_BASE}/vehicle/${id}/sold`, {
+            method: "PATCH",
+            headers: { "Authorization": `Bearer ${getToken()}` }
+        });
 
-    const response = await fetch(`${API_BASE}/vehicle/${id}/sold`, {
-        method: "PATCH",
-        headers: { "Authorization": `Bearer ${token}` }
-    });
-
-    if (response.ok) {
-        getVehicles();
-    } else {
+        if (response.ok) {
+            getVehicles();
+        } else {
+            alert("Error al cambiar estado");
+        }
+    } catch (error) {
+        console.error(error);
         alert("Error al cambiar estado");
     }
 }
