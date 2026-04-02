@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TicoAuto</title>
-
     <link rel="stylesheet" href="css/styles.css">
-
     <script src="js/navbar.js" defer></script>
     <script src="js/index.js" defer></script>
 </head>
@@ -15,25 +14,21 @@
     <div id="navbar"></div>
 
     <div class="search-box">
-
         <h2>Buscar Autos </h2>
-
         <div class="search-grid">
-<input id="brandFilter" placeholder="Marca">
-<input id="modelFilter" placeholder="Modelo">
-<input id="minYearFilter" type="number" placeholder="Año mínimo">
-<input id="maxYearFilter" type="number" placeholder="Año máximo">
-<input id="minPriceFilter" type="number" placeholder="Precio mínimo">
-<input id="maxPriceFilter" type="number" placeholder="Precio máximo">
-
-<select id="statusFilter">
-    <option value="">Estado</option>
-    <option value="available">Disponible</option>
-    <option value="sold">Vendido</option>
-</select>
-<button onclick="searchVehicles()">Buscar</button>
-<button onclick="clearFilters()">Limpiar</button>
-
+            <input type="text" id="brandFilter" placeholder="Marca">
+            <input type="text" id="modelFilter" placeholder="Modelo">
+            <input type="number" id="minYearFilter" placeholder="Año mínimo">
+            <input type="number" id="maxYearFilter" placeholder="Año máximo">
+            <input type="number" id="minPriceFilter" placeholder="Precio mínimo">
+            <input type="number" id="maxPriceFilter" placeholder="Precio máximo">
+            <select id="statusFilter">
+                <option value="">Estado</option>
+                <option value="available">Disponible</option>
+                <option value="sold">Vendido</option>
+            </select>
+            <button onclick="searchVehicles()">Buscar</button>
+            <button onclick="clearFilters()">Limpiar</button>
         </div>
     </div>
     
@@ -41,10 +36,8 @@
 
     <div id="vehicleContainer" class="vehicle-grid"></div>
 
-<footer class="footer">
-
-<p>© 2026 TicoAuto Marketplace</p>
-
-</footer>
+    <footer class="footer">
+        <p>© 2026 TicoAuto Marketplace</p>
+    </footer>
 </body>
 </html>

@@ -2,34 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Detalle del Vehículo</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Vehículo - TicoAuto</title>
     <link rel="stylesheet" href="css/styles.css">
-
-    <script src="js/navbar.js"></script>
+    <script src="js/navbar.js" defer></script>
+    <script src="js/vehicleDetail.js" defer></script>
 </head>
 
 <body class="detail">
-
     <div id="navbar"></div>
 
-<button onclick="history.back()">← Volver</button>
+    <button onclick="history.back()">← Volver</button>
 
+    <h1>Detalle del Vehículo</h1>
 
-<h1>Detalle del Vehículo</h1>
+    <div id="vehicleDetail"></div>
+    <button id="shareBtn" onclick="shareVehicle()">🔗 Compartir vehículo</button>
 
-<div id="vehicleDetail"></div>
-<button id="shareBtn" onclick="shareVehicle()">🔗 Compartir vehículo</button>
+    <h2>Preguntas</h2>
+    <div id="questionList"></div>
 
-<h2>Preguntas</h2>
-<div id="questionList"></div>
-
-<div id="questionSection" style="display:none;">
-    <input id="questionInput" placeholder="Haz una pregunta...">
-    <button class="ask-btn" onclick="createQuestion()">Preguntar</button>
-</div>
-
-<script src="js/vehicleDetail.js" defer></script>
-
+    <div id="questionSection">
+        <input type="text" id="questionInput" placeholder="Haz una pregunta...">
+        <button class="ask-btn" onclick="createQuestion()">Preguntar</button>
+    </div>
 </body>
 </html>
