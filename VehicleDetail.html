@@ -12,19 +12,32 @@
 <body class="detail">
     <div id="navbar"></div>
 
-    <button onclick="history.back()">← Volver</button>
-
-    <h1>Detalle del Vehículo</h1>
-
-    <div id="vehicleDetail"></div>
-    <button id="shareBtn" onclick="shareVehicle()">🔗 Compartir vehículo</button>
-
-    <h2>Preguntas</h2>
-    <div id="questionList"></div>
-
-    <div id="questionSection">
-        <input type="text" id="questionInput" placeholder="Haz una pregunta...">
-        <button class="ask-btn" onclick="createQuestion()">Preguntar</button>
+    <!-- ✅ Header con botón volver -->
+    <div class="detail-hero">
+        <button class="btn-back" onclick="history.back()">← Volver</button>
+        <h1>Detalle del Vehículo</h1>
     </div>
+
+    <!-- ✅ Detalle del vehículo centrado -->
+    <div class="detail-wrapper">
+        <div id="vehicleDetail"></div>
+
+        <button id="shareBtn" onclick="shareVehicle()">🔗 Compartir vehículo</button>
+
+        <!-- ✅ Sección de preguntas con título -->
+        <div class="questions-section">
+            <h2 class="section-title">Preguntas</h2>
+            <div id="questionList"></div>
+
+            <div id="questionSection">
+                <input type="text" id="questionInput" placeholder="Haz una pregunta...">
+                <button class="ask-btn" onclick="createQuestion()">Preguntar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>TicoAuto © 2026</p>
+    </footer>
 </body>
 </html>

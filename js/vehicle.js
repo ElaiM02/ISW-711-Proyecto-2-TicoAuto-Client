@@ -72,21 +72,27 @@ async function getVehicles(){
         }
 
         document.getElementById("vehicleList").innerHTML = vehicles.map(v => `
-            <tr>
-                <td><img src="${v.image ? `http://localhost:3008/uploads/${v.image}` : 'https://via.placeholder.com/60'}" width="60"></td>
-                <td>${v.brand}</td>
-                <td>${v.model}</td>
-                <td>${v.year}</td>
-                <td>$${v.price}</td>
-                <td>${v.status === 'sold' ? 'Vendido' : 'Disponible'}</td>
-                <td>
+        <div class="vehicle-card">
+            <div class="vehicle-img-container">
+                <img src="${v.image ? `http://localhost:3008/uploads/${v.image}` : 'https://via.placeholder.com/300x180'}" class="vehicle-img">
+                <span class="badge ${v.status === 'sold' ? 'badge-sold' : 'badge-available'}">
+                    ${v.status === 'sold' ? 'Vendido' : 'Disponible'}
+                </span>
+            </div>
+            <div class="vehicle-card-body">
+                <h3>${v.brand} ${v.model}</h3>
+                <p>${v.year} • $${v.price.toLocaleString()}</p>
+                <div class="card-actions">
                     <button onclick="viewVehicle('${v._id}')">Ver Detalle</button>
-                    <button onclick="editVehicle('${v._id}')">Editar</button>
-                    <button onclick="deleteVehicle('${v._id}')">Eliminar</button>
-                    <button onclick="markAsSold('${v._id}')">${v.status === 'sold' ? 'Marcar disponible' : 'Marcar vendido'}</button>
-                </td>
-            </tr>
-        `).join('');
+                    <button class="btn-edit" onclick="editVehicle('${v._id}')">Editar</button>
+                    <button class="btn-delete" onclick="deleteVehicle('${v._id}')">Eliminar</button>
+                    <button class="btn-sold" onclick="markAsSold('${v._id}')">
+                        ${v.status === 'sold' ? 'Marcar disponible' : 'Marcar vendido'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 
     } catch (error) {
         console.error(error);
