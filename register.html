@@ -16,8 +16,11 @@
     <h1>Registro</h1>
 
     <form id="registerForm">
+        <label for="cedula">Número de Cédula</label>
+        <input id="cedula" type="text" maxlength="9" placeholder="123456789" required>
+
         <label for="name">Nombre</label>
-        <input id="name" type="text" required>
+        <input id="name" type="text" readonly placeholder="Se autocompleta con la cédula">
 
         <label for="email">Email</label>
         <input id="email" type="email" required>
