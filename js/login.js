@@ -29,7 +29,8 @@ async function login(event) {
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            showMsg("Credenciales inválidas.", true);
+            const msg = data.message || "Credenciales inválidas.";
+            showMsg(msg, true);
             return;
         }
 

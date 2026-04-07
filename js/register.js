@@ -67,11 +67,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!resp.ok) {
-                setMsg("Error al registrar usuario", "err");
+                const data = await resp.json();
+                setMsg(data.message || "Error al registrar usuario", "err");
                 return;
             }
 
-            setMsg("Registro exitoso", "success");
+            setMsg("Registro exitoso. Revisa tu correo para verificar tu cuenta.", "success");
             setTimeout(() => { window.location.href = "login.html"; }, 1000);
 
         } catch (err) {
