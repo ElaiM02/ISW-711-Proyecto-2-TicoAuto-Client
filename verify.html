@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Cuenta - TicoAuto</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/navbar.js" defer></script>
+    <script src="js/verify.js" defer></script>
+</head>
+
+<body>
+    <div id="navbar"></div>
+
+    <div class="verify-container">
+        <div id="loading">
+            <h2>Verificando tu cuenta...</h2>
+            <p>Por favor, espera un momento.</p>
+        </div>
+
+        <div id="success" style="display: none;">
+            <h2>¡Cuenta Verificada!</h2>
+            <p>Tu cuenta ha sido verificada exitosamente. Ahora puedes iniciar sesión.</p>
+            <a href="login.html" class="btn">Iniciar Sesión</a>
+        </div>
+
+        <div id="error" style="display: none;">
+            <h2>Error de Verificación</h2>
+            <p id="errorMsg">El enlace es inválido o ya fue usado.</p>
+            <a href="register.html" class="btn">Registrarse Nuevamente</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>TicoAuto © 2026</p>
+    </footer>
+</body>
+</html>
