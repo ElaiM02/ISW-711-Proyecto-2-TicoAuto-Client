@@ -1,6 +1,10 @@
 const API_BASE = "http://localhost:3008/api";
 const PADRON_API = "http://127.0.0.1:8000";
 
+function cerrarModal() {
+    document.getElementById("cedulaModal").classList.remove("active");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("registerForm");
     const msg = document.getElementById("msg");
@@ -21,27 +25,36 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        const modal = document.getElementById("cedulaModal");
+        document.getElementById("modalLoading").style.display = "block";
+        document.getElementById("modalSuccess").style.display = "none";
+        document.getElementById("modalError").style.display = "none";
+        modal.classList.add("active");
+
         try {
             const resp = await fetch(`${PADRON_API}/padron/cedula/${cedula}`);
+            document.getElementById("modalLoading").style.display = "none";
 
             if (!resp.ok) {
-                setMsg("Cédula no encontrada en el padrón electoral", "err");
+                document.getElementById("modalErrorMsg").textContent = "Cédula no encontrada en el padrón electoral.";
+                document.getElementById("modalError").style.display = "block";
                 document.getElementById("name").value = "";
                 return;
             }
 
-            const person = await resp.json();
+        const person = await resp.json();
+        const nombreCompleto = `${person.nombre} ${person.primer_apellido} ${person.segundo_apellido}`;
+        document.getElementById("name").value = nombreCompleto;
+        document.getElementById("modalName").textContent = nombreCompleto;
+        document.getElementById("modalSuccess").style.display = "block";
 
-            document.getElementById("name").value = 
-                `${person.nombre} ${person.primer_apellido} ${person.segundo_apellido}`;
-
-            setMsg("Cédula verificada correctamente", "success");
-
-        } catch (err) {
-            console.error(err);
-            setMsg("No se pudo conectar al servicio del padrón", "err");
-        }
-    });
+    } catch (err) {
+        console.error(err);
+        document.getElementById("modalLoading").style.display = "none";
+        document.getElementById("modalErrorMsg").textContent = "No se pudo conectar al servicio del padrón.";
+        document.getElementById("modalError").style.display = "block";
+    }
+});
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -72,9 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            setMsg("Registro exitoso. Revisa tu correo para verificar tu cuenta.", "success");
-            setTimeout(() => { window.location.href = "login.html"; }, 1000);
-
+            document.getElementById("successModal").classList.add("active");
+            
         } catch (err) {
             console.error(err);
             setMsg("No se pudo conectar al servidor", "err");
