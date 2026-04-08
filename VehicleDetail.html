@@ -12,19 +12,16 @@
 <body class="detail">
     <div id="navbar"></div>
 
-    <!-- ✅ Header con botón volver -->
     <div class="detail-hero">
         <button class="btn-back" onclick="history.back()">← Volver</button>
         <h1>Detalle del Vehículo</h1>
     </div>
 
-    <!-- ✅ Detalle del vehículo centrado -->
     <div class="detail-wrapper">
         <div id="vehicleDetail"></div>
 
         <button id="shareBtn" onclick="shareVehicle()">🔗 Compartir vehículo</button>
 
-        <!-- ✅ Sección de preguntas con título -->
         <div class="questions-section">
             <h2 class="section-title">Preguntas</h2>
             <div id="questionList"></div>
@@ -33,6 +30,15 @@
                 <input type="text" id="questionInput" placeholder="Haz una pregunta...">
                 <button class="ask-btn" onclick="createQuestion()">Preguntar</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="notifModal">
+        <div class="modal-box">
+            <div class="modal-icon" id="notifIcon"></div>
+            <h3 id="notifTitle"></h3>
+            <p id="notifMsg"></p>
+            <button onclick="cerrarNotif()">Aceptar</button>
         </div>
     </div>
 

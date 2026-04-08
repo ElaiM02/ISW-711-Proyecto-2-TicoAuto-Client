@@ -4,6 +4,17 @@ const getToken = () => sessionStorage.getItem("authToken");
 let vehicleId = null;
 let ownerId = null;
 
+function showNotif(title, msg, icon = "ℹ️") {
+    document.getElementById("notifIcon").textContent = icon;
+    document.getElementById("notifTitle").textContent = title;
+    document.getElementById("notifMsg").textContent = msg;
+    document.getElementById("notifModal").classList.add("active");
+}
+
+function cerrarNotif() {
+    document.getElementById("notifModal").classList.remove("active");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     vehicleId = params.get("id");
@@ -56,7 +67,7 @@ async function loadVehicle(id) {
         `;
     } catch (error) {
         console.error(error);
-        alert("Error al cargar el vehículo");
+        showNotif("Error", "No se pudo cargar el vehículo.", "❌");
     }
 }
 
@@ -141,7 +152,7 @@ async function loadQuestions() {
 async function createQuestion() {
     const token = getToken();
     if (!token) {
-        alert("Debes iniciar sesión para preguntar");
+        showNotif("Sesión requerida", "Debes iniciar sesión para hacer una pregunta.", "🔒");
         return;
     }
 
@@ -149,7 +160,7 @@ async function createQuestion() {
     const question = input.value;
 
     if (!question.trim()) {
-        alert("Escribe una pregunta");
+        showNotif("Campo vacío", "Por favor escribe una pregunta antes de enviar.", "⚠️");
         return;
     }
 
@@ -164,7 +175,7 @@ async function createQuestion() {
         });
 
         if (!response.ok) {
-            alert("Error al enviar la pregunta");
+            showNotif("Error", "No se pudo enviar la pregunta. Intenta de nuevo.", "❌");
             return;
         }
 
@@ -173,15 +184,14 @@ async function createQuestion() {
 
     } catch (error) {
         console.error(error);
-        alert("Error al enviar la pregunta");
+        showNotif("Error", "No se pudo conectar al servidor.", "❌");
     }
 }
-
 
 async function createAnswer(questionId) {
     const token = getToken();
     if (!token) {
-        alert("Debes iniciar sesión");
+        showNotif("Sesión requerida", "Debes iniciar sesión para responder.", "🔒");
         return;
     }
 
@@ -189,7 +199,7 @@ async function createAnswer(questionId) {
     const answer = textarea.value;
 
     if (!answer.trim()) {
-        alert("Escribe una respuesta");
+        showNotif("Campo vacío", "Por favor escribe una respuesta antes de enviar.", "⚠️");
         return;
     }
 
@@ -204,21 +214,21 @@ async function createAnswer(questionId) {
             });
 
             if (!response.ok) {
-            alert("Error al enviar la respuesta");
+            showNotif("Error", "No se pudo enviar la respuesta. Intenta de nuevo.", "❌");
             return;
         }
         loadQuestions();
     } catch (error) {
         console.error(error);
-        alert("Error al enviar la respuesta");
+        showNotif("Error", "No se pudo conectar al servidor.", "❌");
     }
 }
 
 function shareVehicle() {
     const url = window.location.href;   
     navigator.clipboard.writeText(url).then(() => {
-        alert("¡Enlace copiado al portapapeles!\n" + url);
+        showNotif("¡Enlace copiado!", "El enlace del vehículo fue copiado al portapapeles.", "🔗");
     }).catch(() => {
-        prompt("Copia este enlace:", url);
+        showNotif("Compartir vehículo", url, "🔗");
     });
 }
