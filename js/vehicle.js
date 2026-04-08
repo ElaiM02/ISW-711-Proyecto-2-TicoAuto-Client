@@ -2,6 +2,36 @@ const API_BASE = "http://localhost:3008/api";
 const getToken = () => sessionStorage.getItem("authToken");
 
 let editVehicleId = null;
+let conffirmCallback = null;
+
+function showNotif(title, msg, icon = "ℹ️") {
+    document.getElementById("notifIcon").textContent = icon;
+    document.getElementById("notifTitle").textContent = title;
+    document.getElementById("notifMsg").textContent = msg;
+    document.getElementById("notifModal").classList.add("active");
+}
+
+function cerrarNotif() {
+    document.getElementById("notifModal").classList.remove("active");
+}
+
+function showConfirm(title, msg, callback) {
+    document.getElementById("confirmTitle").textContent = title;
+    document.getElementById("confirmMsg").textContent = msg;
+    document.getElementById("confirmModal").classList.add("active");
+    confirmCallback = callback;
+}
+
+function confirmAceptar() {
+    document.getElementById("confirmModal").classList.remove("active");
+    if (confirmCallback) confirmCallback();
+    confirmCallback = null;
+}
+
+function cerrarConfirm() {
+    document.getElementById("confirmModal").classList.remove("active");
+    confirmCallback = null;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     getVehicles();
@@ -37,15 +67,19 @@ async function createVehicle() {
         });
 
         if (response.ok) {
-            alert(editVehicleId ? "Vehículo actualizado" : "Vehículo creado");
+            showNotif(
+                editVehicleId ? "Vehículo actualizado" : "Vehículo creado",
+                editVehicleId ? "Los cambios fueron guardados exitosamente." : "Tu vehículo fue publicado exitosamente.",
+                "✅"
+            );          
             resetForm();
             getVehicles();
         } else {
-            alert("Error al guardar vehículo");
+            showNotif("Error", "No se pudo guardar el vehículo. Intenta de nuevo.", "❌");
         }
     } catch (error) {
         console.error(error);
-        alert("Error al guardar vehículo");
+        showNotif("Error", "No se pudo conectar al servidor.", "❌");
     }
 }
 
@@ -96,7 +130,7 @@ async function getVehicles(){
 
     } catch (error) {
         console.error(error);
-        alert("Error al cargar vehículos");
+        showNotif("Error", "No se pudieron cargar los vehículos.", "❌");
     }
 }
 
@@ -111,7 +145,7 @@ async function editVehicle(id){
         });
 
         if (!response.ok) {
-            alert("Error al cargar vehículo");
+            showNotif("Error", "No se pudo cargar el vehículo.", "❌");
             return;
         }
 
@@ -135,29 +169,33 @@ async function editVehicle(id){
         document.getElementById("cancelEdit").style.display = "inline";
     } catch (error) {
         console.error(error);
-        alert("Error al cargar vehículo");
+        showNotif("Error", "No se pudo conectar al servidor.", "❌");
     }
 }
 
 async function deleteVehicle(id){
-    if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
+    showConfirm(
+        "Eliminar vehículo",
+        "¿Estás seguro de que deseas eliminar este vehículo? Esta acción no se puede deshacer.",
+        async () => {
+            try {
+                const response = await fetch(`${API_BASE}/vehicle/${id}`, {
+                    method: "DELETE",
+                    headers: {"Authorization": `Bearer ${getToken()}`}
+                });
 
-    try {
-        const response = await fetch(`${API_BASE}/vehicle/${id}`, {
-            method: "DELETE",
-            headers: {"Authorization": `Bearer ${getToken()}`}
-        });
-
-        if(response.ok){
-            alert("Vehículo eliminado");
-            getVehicles();
-        } else {
-            alert("Error al eliminar vehículo");
+                if(response.ok){
+                showNotif("Vehículo eliminado", "El vehículo fue eliminado exitosamente.", "🗑️");
+                    getVehicles();
+                } else {
+                    showNotif("Error", "No se pudo eliminar el vehículo.", "❌");
+                }
+            } catch (error) {
+                console.error(error);
+                showNotif("Error", "No se pudo conectar al servidor.", "❌");
+            }
         }
-    } catch (error) {
-        console.error(error);
-        alert("Error al eliminar vehículo");
-    }
+    );
 }
 
 async function markAsSold(id) {
@@ -170,10 +208,10 @@ async function markAsSold(id) {
         if (response.ok) {
             getVehicles();
         } else {
-            alert("Error al cambiar estado");
+            showNotif("Error", "No se pudo cambiar el estado del vehículo.", "❌");
         }
     } catch (error) {
         console.error(error);
-        alert("Error al cambiar estado");
+        showNotif("Error", "No se pudo conectar al servidor.", "❌");
     }
 }
