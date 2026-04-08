@@ -5,23 +5,26 @@ function cerrarModal() {
     document.getElementById("cedulaModal").classList.remove("active");
 }
 
+function showErrorModal(title, msg) {
+    document.getElementById("modalLoading").style.display = "none";
+    document.getElementById("modalSuccess").style.display = "none";
+    document.getElementById("modalError").style.display = "none";
+    document.getElementById("modalErrorTitle").textContent = title;
+    document.getElementById("modalErrorMsg").textContent = msg;
+    document.getElementById("modalError").style.display = "block";
+    document.getElementById("cedulaModal").classList.add("active");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("registerForm");
-    const msg = document.getElementById("msg");
     const btn = document.getElementById("btnRegister");
     const cedulaInput = document.getElementById("cedula");
-
-
-    function setMsg(text, type = "") {
-        msg.textContent = text;
-        msg.className = `msg ${type}`;
-    }
 
     cedulaInput.addEventListener("blur", async () => {
         const cedula = cedulaInput.value.trim();
 
         if (cedula.length !== 9 || !cedula.match(/^\d+$/)) {
-            setMsg("La cédula debe tener 9 dígitos", "err");
+            showErrorModal("Cédula inválida", "La cédula debe tener exactamente 9 dígitos.");
             return;
         }
 
@@ -36,25 +39,22 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("modalLoading").style.display = "none";
 
             if (!resp.ok) {
-                document.getElementById("modalErrorMsg").textContent = "Cédula no encontrada en el padrón electoral.";
-                document.getElementById("modalError").style.display = "block";
+                showErrorModal("Cédula no encontrada", "La cédula no existe en el padrón electoral.");
                 document.getElementById("name").value = "";
                 return;
             }
 
-        const person = await resp.json();
-        const nombreCompleto = `${person.nombre} ${person.primer_apellido} ${person.segundo_apellido}`;
-        document.getElementById("name").value = nombreCompleto;
-        document.getElementById("modalName").textContent = nombreCompleto;
-        document.getElementById("modalSuccess").style.display = "block";
+            const person = await resp.json();
+            const nombreCompleto = `${person.nombre} ${person.primer_apellido} ${person.segundo_apellido}`;
+            document.getElementById("name").value = nombreCompleto;
+            document.getElementById("modalName").textContent = nombreCompleto;
+            document.getElementById("modalSuccess").style.display = "block";
 
-    } catch (err) {
-        console.error(err);
-        document.getElementById("modalLoading").style.display = "none";
-        document.getElementById("modalErrorMsg").textContent = "No se pudo conectar al servicio del padrón.";
-        document.getElementById("modalError").style.display = "block";
-    }
-});
+        } catch (err) {
+            console.error(err);
+            showErrorModal("Error de conexión", "No se pudo conectar al servicio del padrón.");
+        }
+    });
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -64,10 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = document.getElementById("password").value;
         const cedula = document.getElementById("cedula").value.trim();
 
-        if (cedula.length !== 9 || !cedula.match(/^\d+$/)) return setMsg("La cédula debe tener 9 dígitos", "err");
-        if (name.length < 2) return setMsg("El nombre es muy corto", "err");
-        if (!email.includes("@")) return setMsg("Correo inválido", "err");
-        if (password.length < 6) return setMsg("La contraseña debe tener mínimo 6 caracteres", "err");
+        if (cedula.length !== 9 || !cedula.match(/^\d+$/)) return showErrorModal("Cédula inválida", "La cédula debe tener exactamente 9 dígitos.");
+        if (name.length < 2) return showErrorModal("Nombre inválido", "El nombre es muy corto.");
+        if (!email.includes("@")) return showErrorModal("Correo inválido", "Por favor ingresa un correo electrónico válido.");
+        if (password.length < 6) return showErrorModal("Contraseña inválida", "La contraseña debe tener mínimo 6 caracteres.");
 
         btn.disabled = true;
         btn.textContent = "Registrando...";
@@ -80,16 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!resp.ok) {
-                const data = await resp.json();
-                setMsg(data.message || "Error al registrar usuario", "err");
+                if (resp.status === 409) {
+                    showErrorModal("Usuario ya registrado", "El correo electrónico o la cédula ya están registrados.");
+                } else if (resp.status === 400) {
+                    showErrorModal("Datos inválidos", "La cédula no es válida o los datos son incorrectos.");
+                } else {
+                    showErrorModal("Error", "No se pudo completar el registro. Intenta más tarde.");
+                }
                 return;
             }
 
             document.getElementById("successModal").classList.add("active");
-            
+
         } catch (err) {
             console.error(err);
-            setMsg("No se pudo conectar al servidor", "err");
+            showErrorModal("Error de conexión", "No se pudo conectar al servidor.");
         } finally {
             btn.disabled = false;
             btn.textContent = "Registrarse";
