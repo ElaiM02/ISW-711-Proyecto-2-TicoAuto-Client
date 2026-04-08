@@ -23,7 +23,6 @@ const verify = async () => {
 
         if (resp.ok) {
             success.style.display = "block";
-            setTimeout(() => { window.location.href = "login.html"; }, 3000);
         } else {
             const data = await resp.json();
             errorMsg.textContent = data.message || "Token inválido o expirado.";

@@ -13,22 +13,26 @@
 <body>
     <div id="navbar"></div>
 
-    <div class="verify-container">
-        <div id="loading">
+    <div class="verify-wrapper">
+
+        <div id="loading" class="verify-card">
+            <div class="spinner-large"></div>
             <h2>Verificando tu cuenta...</h2>
-            <p>Por favor, espera un momento.</p>
+            <p>Por favor espera un momento.</p>
         </div>
 
-        <div id="success" style="display: none;">
-            <h2>¡Cuenta Verificada!</h2>
-            <p>Tu cuenta ha sido verificada exitosamente. Ahora puedes iniciar sesión.</p>
-            <a href="login.html" class="btn">Iniciar Sesión</a>
+        <div id="success" class="verify-card" style="display:none">
+            <div class="verify-icon">✅</div>
+            <h2>¡Cuenta verificada!</h2>
+            <p>Tu cuenta ha sido activada exitosamente. Ya puedes iniciar sesión.</p>
+            <a href="login.html" class="verify-btn">Ir al Login</a>
         </div>
 
-        <div id="error" style="display: none;">
-            <h2>Error de Verificación</h2>
+        <div id="error" class="verify-card" style="display:none">
+            <div class="verify-icon">❌</div>
+            <h2>Error de verificación</h2>
             <p id="errorMsg">El enlace es inválido o ya fue usado.</p>
-            <a href="register.html" class="btn">Registrarse Nuevamente</a>
+            <a href="register.html" class="verify-btn verify-btn-secondary">Registrarse nuevamente</a>
         </div>
     </div>
 
