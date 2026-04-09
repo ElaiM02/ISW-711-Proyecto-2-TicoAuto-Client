@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Cédula - TicoAuto</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/navbar.js" defer></script>
+    <script src="js/google-cedula.js" defer></script>
+</head>
+
+<body>
+    <div id="navbar"></div>
+
+    <div class="verify-wrapper">
+        <div class="verify-card">
+            <div class="verify-icon">🪪</div>
+            <h2>Un paso más</h2>
+            <p>Para completar tu registro con Google necesitamos verificar tu cédula de identidad.</p>
+
+            <input id="cedula" type="text" maxlength="9" placeholder="123456789" 
+                style="width:100%; padding:10px 14px; border:1px solid #dde; border-radius:8px; font-size:14px; margin-bottom:15px;">
+            
+            <div id="nombreCompleto" style="display:none; margin-bottom:15px; color:#1a8a4a; font-weight:600;"></div>
+
+            <button id="btnVerificar" onclick="verificarCedula()" class="verify-btn" style="width:100%; border:none; cursor:pointer;">
+                Verificar Cédula
+            </button>
+
+            <p id="msg" style="margin-top:10px; font-size:14px;"></p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>TicoAuto © 2026</p>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="notifModal">
+        <div class="modal-box">
+            <div class="modal-icon" id="notifIcon"></div>
+            <h3 id="notifTitle"></h3>
+            <p id="notifMsg"></p>
+            <button onclick="cerrarNotif()">Aceptar</button>
+        </div>
+    </div>
+</body>
+</html>
