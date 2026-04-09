@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicoAuto</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="verify-wrapper">
+        <div class="verify-card">
+            <div class="spinner-large"></div>
+            <h2>Iniciando sesión...</h2>
+            <p>Por favor espera un momento.</p>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+
+        if (token) {
+            sessionStorage.setItem("authToken", token);
+            window.location.href = "index.html";
+        } else {
+            window.location.href = "login.html?error=google_error";
+        }
+    </script>
+</body>
+</html>
