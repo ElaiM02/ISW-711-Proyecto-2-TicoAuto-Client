@@ -33,7 +33,6 @@ async function verificarCedula() {
     btn.textContent = "Verificando...";
 
     try {
-        // Verificar en el padrón
         const padronResp = await fetch(`${PADRON_API}/padron/cedula/${cedula}`);
 
         if (!padronResp.ok) {
@@ -49,7 +48,6 @@ async function verificarCedula() {
         document.getElementById("nombreCompleto").textContent = `✅ ${nombreCompleto}`;
         document.getElementById("nombreCompleto").style.display = "block";
 
-        // Enviar al backend
         const resp = await fetch(`${API_BASE}/users/google/cedula`, {
             method: "POST",
             headers: {
@@ -69,8 +67,6 @@ async function verificarCedula() {
              btn.textContent = "Verificar Cédula";
              return;
         }
-
-        // Guardar token y redirigir
          sessionStorage.setItem("authToken", token);
         showNotif("✅", "¡Registro completado!", "Tu cuenta ha sido verificada exitosamente.");
         setTimeout(() => { window.location.href = "index.html"; }, 2000);
