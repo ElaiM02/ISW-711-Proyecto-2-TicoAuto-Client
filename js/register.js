@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.classList.add("active");
 
         try {
-            const resp = await fetch(`${PADRON_API}/padron/cedula/${cedula}`);
+            const resp = await fetch(`${API_BASE}/users/cedula/${cedula}`);
             document.getElementById("modalLoading").style.display = "none";
 
             if (!resp.ok) {
