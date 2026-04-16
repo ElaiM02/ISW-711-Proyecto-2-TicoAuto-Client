@@ -63,11 +63,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         const cedula = document.getElementById("cedula").value.trim();
+        const phone = document.getElementById("phone").value.trim();
 
         if (cedula.length !== 9 || !cedula.match(/^\d+$/)) return showErrorModal("Cédula inválida", "La cédula debe tener exactamente 9 dígitos.");
         if (name.length < 2) return showErrorModal("Nombre inválido", "El nombre es muy corto.");
         if (!email.includes("@")) return showErrorModal("Correo inválido", "Por favor ingresa un correo electrónico válido.");
         if (password.length < 6) return showErrorModal("Contraseña inválida", "La contraseña debe tener mínimo 6 caracteres.");
+        if (!phone) return showErrorModal("Teléfono requerido", "Por favor ingresa un número de teléfono.");
 
         btn.disabled = true;
         btn.textContent = "Registrando...";
@@ -76,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const resp = await fetch(`${API_BASE}/users`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password, cedula })
+                body: JSON.stringify({ name, email, password, cedula, phone })
             });
 
             if (!resp.ok) {
